@@ -10,10 +10,12 @@ const collectRoute = async (req, res) => {
   await Promise.mapSeries(req.body.data, async (data) => {
 
     const raw = await Raw.forge({
-      headers: {
-        useragent: req.headers['user-agent']
+      data: {
+        ...data,
+        ip: data.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        ua: data.ua || req.headers['user-agent'],
+        refr: data.refr || req.headers['referer']
       },
-      data,
       status: 'pending',
       attempts: 0
     }).fetch({
