@@ -1,4 +1,4 @@
-import EventType from '@apps/analytics/models/event_type'
+import EventType from '@app/model/event_type'
 
 const getType = (data) => {
   if(data.event !== 'unstruct') return data.event

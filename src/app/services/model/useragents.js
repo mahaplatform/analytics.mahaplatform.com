@@ -1,10 +1,10 @@
-import Manufacturer from '@apps/analytics/models/manufacturer'
-import Useragent from '@apps/analytics/models/useragent'
-import Browser from '@apps/analytics/models/browser'
-import Version from '@apps/analytics/models/version'
-import Device from '@apps/analytics/models/device'
-import OS from '@apps/analytics/models/os'
+import Manufacturer from '@app/models/manufacturer'
+import Useragent from '@app/models/useragent'
+import Browser from '@app/models/browser'
+import Version from '@app/models/version'
+import Device from '@app/models/device'
 import UAParser from 'ua-parser-js'
+import OS from '@app/models/os'
 
 export const getUseragent = async(req, { data }) => {
 

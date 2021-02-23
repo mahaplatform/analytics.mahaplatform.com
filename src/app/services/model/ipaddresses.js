@@ -1,10 +1,10 @@
-import PostalCode from '@apps/analytics/models/postal_code'
-import MetroCode from '@apps/analytics/models/metro_code'
-import IPAddress from '@apps/analytics/models/ipaddress'
-import Country from '@apps/analytics/models/country'
-import Region from '@apps/analytics/models/region'
-import City from '@apps/analytics/models/city'
+import PostalCode from '@app/models/postal_code'
+import MetroCode from '@app/models/metro_code'
+import IPAddress from '@app/models/ipaddress'
 import { lookupIPAddress } from './maxmind'
+import Country from '@app/models/country'
+import Region from '@app/models/region'
+import City from '@app/models/city'
 
 export const getIPAddress = async(req, { data }) => {
 

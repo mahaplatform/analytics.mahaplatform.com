@@ -47,7 +47,7 @@ export const processEvent = async(req, { id }) => {
     }
 
     await raw.save({
-      status: 'processed'
+      modeling_status: 'processed'
     }, {
       transacting: req.analytics,
       patch: true
@@ -56,8 +56,7 @@ export const processEvent = async(req, { id }) => {
   } catch(error) {
 
     await raw.save({
-      attempts: raw.get('attempts') + 1,
-      status: 'failed',
+      modeling_status: 'failed',
       error: error.stack
     }, {
       transacting: req.analytics,

@@ -1,11 +1,11 @@
-import Protocol from '@apps/analytics/models/protocol'
-import Domain from '@apps/analytics/models/domain'
-import Page from '@apps/analytics/models/page'
+import Protocol from '@app/models/protocol'
+import Referer from '@app/models/referer'
+import Domain from '@app/models/domain'
 import URL from 'url'
 
-export const getPage = async(req, data) => {
+export const getReferer = async(req, { data }) => {
 
-  const url = URL.parse(data.url)
+  const url = URL.parse(data.page_referrer)
 
   const protocol = await Protocol.fetchOrCreate({
     text: url.protocol.slice(0, -1)
@@ -19,19 +19,17 @@ export const getPage = async(req, data) => {
     transacting: req.analytics
   })
 
-  const page = await Page.query(qb => {
+  const referer = await Referer.query(qb => {
     qb.where('protocol_id', protocol.get('id'))
     qb.where('domain_id', domain.get('id'))
     qb.where('path', url.path)
-    qb.where('title', data.title)
   }).fetch({
     transacting: req.analytics
   })
 
-  if(page) return page
+  if(referer) return referer
 
-  return await Page.forge({
-    title: data.title,
+  return await Referer.forge({
     protocol_id: protocol.get('id'),
     domain_id: domain.get('id'),
     path: url.path

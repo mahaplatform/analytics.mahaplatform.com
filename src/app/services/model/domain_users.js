@@ -1,4 +1,4 @@
-import DomainUser from '@apps/analytics/models/domain_user'
+import DomainUser from '@app/models/domain_user'
 
 const getContactId = ({ data, page_url }) => {
   if(data.user_id) return data.user_id

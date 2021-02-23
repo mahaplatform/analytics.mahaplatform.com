@@ -16,8 +16,9 @@ const collectRoute = async (req, res) => {
         ua: data.ua || req.headers['user-agent'],
         refr: data.refr || req.headers['referer']
       },
-      status: 'pending',
-      attempts: 0
+      validation_status: 'pending',
+      enrichment_status: 'pending',
+      modeling_status: 'pending'
     }).fetch({
       transacting: req.analytics
     })

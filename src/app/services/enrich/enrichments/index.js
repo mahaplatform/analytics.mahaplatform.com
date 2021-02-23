@@ -1,9 +1,9 @@
-import transactionEnrichment from './enrichments/transaction'
-import useragentEnrichment from './enrichments/useragent'
-import ipaddressEnrichment from './enrichments/ipaddress'
-import campaginEnrichment from './enrichments/ipaddress'
-import referrerEnrichment from './enrichments/referrer'
-import pageEnrichment from './enrichments/page'
+import transactionEnrichment from './transaction'
+import useragentEnrichment from './useragent'
+import ipaddressEnrichment from './ipaddress'
+import campaginEnrichment from './ipaddress'
+import referrerEnrichment from './referrer'
+import pageEnrichment from './page'
 
 const enrichments = [
   pageEnrichment,

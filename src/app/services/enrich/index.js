@@ -20,15 +20,15 @@ const enrich = async (req, job) => {
 
     const enriched = await Promise.reduce(enrichments, async (enrichment, enriched) => {
       return await enrichment(req, enriched)
-    }, event)
+    }, {
+      event,
+      collector_tstamp: raw.get('created_at').format('YYYY-MM-DD HH:mm:ss.SSS'),
+      etl_timetamp: moment().format('YYYY-MM-DD HH:mm:ss.SSS')
+    })
 
     await raw.save({
-      enriched: {
-        enriched,
-        collector_tstamp: raw.get('created_at').format('YYYY-MM-DD HH:mm:ss.SSS'),
-        etl_timetamp: moment().format('YYYY-MM-DD HH:mm:ss.SSS')
-      },
-      status: 'enriched'
+      enriched,
+      status: 'processed'
     },{
       transacting: req.analytics,
       patch: true
@@ -41,7 +41,7 @@ const enrich = async (req, job) => {
   } catch(error) {
 
     await raw.save({
-      status: 'unenriched',
+      status: 'failed',
       error: error.stack
     },{
       transacting: req.analytics,
