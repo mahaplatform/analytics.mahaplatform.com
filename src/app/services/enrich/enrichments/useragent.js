@@ -16,7 +16,9 @@ const useragentEnrichment = async(req, event) => {
     os_family: null,
     os_manufacturer: null,
     br_name: ua.browser.name,
+    br_renderengine: null,
     br_family: null,
+    br_type: null,
     br_version: ua.browser.major
   }
 

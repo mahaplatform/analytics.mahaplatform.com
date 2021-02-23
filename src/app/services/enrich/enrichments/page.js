@@ -2,14 +2,16 @@ const pageEnrichment = async(req, event) => {
 
   if(!event.page_url) return event
 
+  const url = URL.parse(event.page_url)
+
   return {
     ...event,
-    page_urlscheme: null,
-    page_urlhost: null,
-    page_urlport: null,
-    page_urlpath: null,
-    page_urlquery: null,
-    page_urlfragment: null
+    page_urlscheme: url.protocol.slice(0, -1),
+    page_urlhost: url.hostname,
+    page_urlport: url.port,
+    page_urlpath: url.pathname,
+    page_urlquery: url.search.substr(1),
+    page_urlfragment: url.hash.substr(1)
   }
 
 }

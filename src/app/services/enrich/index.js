@@ -2,6 +2,7 @@ import EnrichQueue from '@app/queue/enrich_queue'
 import enrichments from './enrichments'
 import Raw from '@app/models/raw'
 import parseEvent from './event'
+import moment from 'moment'
 
 const enrich = async (req, job) => {
 
@@ -22,7 +23,11 @@ const enrich = async (req, job) => {
     }, event)
 
     await raw.save({
-      enriched
+      enriched: {
+        enriched,
+        collector_tstamp: raw.get('created_at').format('YYYY-MM-DD HH:mm:ss.SSS'),
+        etl_timetamp: moment().format('YYYY-MM-DD HH:mm:ss.SSS')
+      }
     },{
       transacting: req.analytics,
       patch: true

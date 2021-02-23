@@ -1,32 +1,26 @@
-import atob from 'atob'
-
 const transactionEnrichment = async(req, event) => {
-
-  if(!event.cx) return event
-
-  const context = JSON.parse(atob(event.cx))
 
   return {
     ...event,
-    tr_orderid: null,
-    tr_affiliation: null,
-    tr_total: null,
-    tr_tax: null,
-    tr_shipping: null,
-    tr_city: null,
-    tr_state: null,
-    tr_country: null,
-    tr_currency: null,
+    tr_orderid: event.tr_id,
+    tr_affiliation: event.tr_af,
+    tr_total: event.tr_tt,
+    tr_tax: event.tr_tx,
+    tr_shipping: event.tr_sh,
+    tr_city: event.tr_ci,
+    tr_state: event.tr_st,
+    tr_country: event.tr_co,
+    tr_currency: event.tr_cu,
     tr_total_base: null,
     tr_tax_base: null,
     tr_shipping_base: null,
-    ti_orderid: null,
-    ti_sku: null,
-    ti_name: null,
-    ti_category: null,
-    ti_price: null,
-    ti_quantity: null,
-    ti_currency: null,
+    ti_orderid: event.ti_id,
+    ti_sku: event.ti_sk,
+    ti_name: event.ti_na,
+    ti_category: event.ti_ca,
+    ti_price: event.ti_pr,
+    ti_quantity: event.ti_qu,
+    ti_currency: event.ti_cu,
     ti_price_base: null
   }
 

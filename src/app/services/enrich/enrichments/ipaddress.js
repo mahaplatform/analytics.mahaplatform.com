@@ -10,6 +10,10 @@ const ipaddressEnrichment = async(req, event) => {
 
   return {
     ...event,
+    ip_isp: null,
+    ip_organization: null,
+    ip_domain: null,
+    ip_netspeed: null,
     geo_country_code: geo.country_code,
     geo_country: geo.country,
     geo_region_code: geo.region_code,
