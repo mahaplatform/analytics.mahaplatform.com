@@ -3,8 +3,9 @@ const CreatePageviewDetails = {
   databaseName: 'analytics',
 
   up: async (knex) => {
+
     await knex.raw(`
-      create view pageview_details as (
+      create view pageview_details as
       with pageviews as (
       select events.*
       from events
@@ -44,7 +45,7 @@ const CreatePageviewDetails = {
       ),
       scrolldepths as (
       select pageviews.id as pageview_id,
-      round(least(((maxdepths.maxdepth + pageviews.view_height) / documents.doc_height::float), 1)::numeric, 2) as scrolldepth
+      round(least(((least(maxdepths.maxdepth, pageviews.doc_height) + pageviews.view_height) / documents.doc_height::float), 1)::numeric, 2) as scrolldepth
       from pageviews
       inner join maxdepths on maxdepths.pageview_id=pageviews.id
       inner join documents on documents.pageview_id=pageviews.id
@@ -55,8 +56,8 @@ const CreatePageviewDetails = {
       from pageviews
       left join durations on durations.pageview_id=pageviews.id
       left join scrolldepths on scrolldepths.pageview_id=pageviews.id
-      )
     `)
+    
   },
 
   down: async (knex) => {

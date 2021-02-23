@@ -3,7 +3,7 @@ import log from '@core/utils/log'
 import path from 'path'
 
 const start = (name) => {
-  const queue = require(path.join(__dirname,'app','cron',`${name}_cron.js`))
+  const queue = require(path.join(__dirname,'app','cron',`${name}_cron.js`)).default
   log('info', 'cron', `Starting ${queue.name}`)
   queue.start()
 }

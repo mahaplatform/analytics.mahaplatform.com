@@ -16,11 +16,11 @@ class Model {
       virtuals: {},
 
       fetch: function(fetchOptions = {}) {
-        return bookshelf[options.databaseName].Model.prototype.fetch.call(this, mergeOptions(fetchOptions, options))
+        return bookshelf.Model.prototype.fetch.call(this, mergeOptions(fetchOptions, options))
       },
 
       fetchAll: function(fetchOptions = {}) {
-        return bookshelf[options.databaseName].Model.prototype.fetchAll.call(this, mergeOptions(fetchOptions, options))
+        return bookshelf.Model.prototype.fetchAll.call(this, mergeOptions(fetchOptions, options))
       },
 
       ...options

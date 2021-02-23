@@ -1,12 +1,12 @@
-import request from 'request-promise'
 import tar from 'tar-stream'
+import axios from 'axios'
 import path from 'path'
 import zlib from 'zlib'
 import fs from 'fs'
 
 export const updateDatabase = async () => {
 
-  const database  = await request({
+  const database  = await axios({
     uri: `https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${process.env.MAXMIND_LICENSE_KEY}&suffix=tar.gz`,
     encoding: 'binary'
   })

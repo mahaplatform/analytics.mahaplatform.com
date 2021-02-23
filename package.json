@@ -36,6 +36,7 @@
   "dependencies": {
     "archiver": "^3.0.0",
     "aws-sdk": "^2.554.0",
+    "axios": "^0.21.1",
     "body-parser": "^1.17.1",
     "bookshelf": "^0.14.2",
     "bull": "^3.20.0",
@@ -43,6 +44,7 @@
     "checkit": "^0.7.0",
     "cors": "^2.8.5",
     "dotenv": "^4.0.0",
+    "ejs": "^3.1.6",
     "express": "^4.15.2",
     "express-async-errors": "^3.1.1",
     "ioredis": "^4.19.4",
@@ -56,6 +58,8 @@
     "numeral": "^2.0.6",
     "pg": "^8.5.1",
     "pluralize": "^6.0.0",
-    "qs": "^6.4.0"
+    "qs": "^6.4.0",
+    "tar-stream": "^2.2.0",
+    "winston": "^3.3.3"
   }
 }

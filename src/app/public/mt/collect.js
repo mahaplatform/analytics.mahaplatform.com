@@ -7,27 +7,31 @@ const data = fs.readFileSync(path.join(__dirname, 'spacer.gif'))
 
 const collectRoute = async (req, res) => {
 
-  await Promise.mapSeries(req.body.data, async (data) => {
+  if(req.body.data) {
 
-    const raw = await Raw.forge({
-      data: {
-        ...data,
-        ip: data.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-        ua: data.ua || req.headers['user-agent'],
-        refr: data.refr || req.headers['referer']
-      },
-      validation_status: 'pending',
-      enrichment_status: 'pending',
-      modeling_status: 'pending'
-    }).fetch({
-      transacting: req.analytics
+    await Promise.mapSeries(req.body.data, async (data) => {
+
+      const raw = await Raw.forge({
+        data: {
+          ...data,
+          ip: data.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+          ua: data.ua || req.headers['user-agent'],
+          refr: data.refr || req.headers['referer']
+        },
+        validation_status: 'pending',
+        enrichment_status: 'pending',
+        modeling_status: 'pending'
+      }).save(null, {
+        transacting: req.analytics
+      })
+
+      await ValidateQueue.enqueue(req, {
+        id: raw.get('id')
+      })
+
     })
 
-    await ValidateQueue.enqueue(req, {
-      id: raw.get('id')
-    })
-
-  })
+  }
 
   return res.status(200).type('image/gif').send(data)
 

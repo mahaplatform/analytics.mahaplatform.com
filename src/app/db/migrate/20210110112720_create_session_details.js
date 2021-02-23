@@ -1,10 +1,8 @@
-const SessionDetails = {
+const CreateSessionDetails = {
 
   databaseName: 'analytics',
 
   up: async (knex) => {
-
-    await knex.raw('drop view session_details')
 
     await knex.raw(`
       create view session_details as
@@ -126,6 +124,7 @@ const SessionDetails = {
       left join browsers on browsers.id=useragents.browser_id
       left join versions browser_versions on browser_versions.id=useragents.browser_version_id
     `)
+    
   },
 
   down: async (knex) => {
@@ -133,4 +132,4 @@ const SessionDetails = {
 
 }
 
-export default SessionDetails
+export default CreateSessionDetails

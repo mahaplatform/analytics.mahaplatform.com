@@ -3,6 +3,7 @@ import mtMiddleware from '@app/public/mt'
 import transaction from './transaction'
 import bodyParser from 'body-parser'
 import apiMiddleware from '@app/api'
+import logger from './logger'
 import express from 'express'
 import qs from 'qs'
 
@@ -13,6 +14,8 @@ server.set('query parser', str => qs.parse(str, { arrayLimit: 100, depth: 10 }))
 server.use(bodyParser.json({ limit: '5mb' }))
 
 server.use(transaction)
+
+server.use(logger)
 
 server.use('/mt', mtMiddleware)
 
