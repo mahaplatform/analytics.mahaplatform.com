@@ -1,4 +1,4 @@
-import EnrichQueue from '@app/queue/enrich_queue'
+import ValidateQueue from '@app/queue/validate_queue'
 import Raw from '@app/models/raw'
 import path from 'path'
 import fs from 'fs'
@@ -22,7 +22,7 @@ const collectRoute = async (req, res) => {
       transacting: req.analytics
     })
 
-    await EnrichQueue.enqueue(req, {
+    await ValidateQueue.enqueue(req, {
       id: raw.get('id')
     })
 

@@ -1,4 +1,4 @@
-import EnrichQueue from '@app/queue/enrich_queue'
+import ModelQueue from '@app/queue/model_queue'
 import enrichments from './enrichments'
 import Raw from '@app/models/raw'
 import parseEvent from './event'
@@ -27,23 +27,25 @@ const enrich = async (req, job) => {
         enriched,
         collector_tstamp: raw.get('created_at').format('YYYY-MM-DD HH:mm:ss.SSS'),
         etl_timetamp: moment().format('YYYY-MM-DD HH:mm:ss.SSS')
-      }
+      },
+      status: 'enriched'
     },{
       transacting: req.analytics,
       patch: true
     })
 
-  } catch(err) {
+    await ModelQueue.enqueue(req, {
+      id: raw.get('id')
+    })
+
+  } catch(error) {
 
     await raw.save({
-      status: 'failed'
+      status: 'unenriched',
+      error: error.stack
     },{
       transacting: req.analytics,
       patch: true
-    })
-
-    await EnrichQueue.enqueue(req, {
-      id: raw.get('id')
     })
 
   }
