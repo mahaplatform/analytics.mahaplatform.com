@@ -1,4 +1,4 @@
-import ValidateQueue from '@app/queue/validate_queue'
+import ValidateQueue from '@app/queues/validate_queue'
 import Raw from '@app/models/raw'
 import path from 'path'
 import fs from 'fs'

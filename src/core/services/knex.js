@@ -1,15 +1,11 @@
 import Knex from 'knex'
 
-const knex = (connection) => new Knex({
+export default new Knex({
   client: 'postgresql',
-  connection,
+  connection: process.env.ANALYTICS_URL,
   useNullAsDefault: true,
   pool: {
     min: 5,
     max: 10
   }
 })
-
-export const analytics = knex(process.env.ANALYTICS_URL)
-
-export default analytics

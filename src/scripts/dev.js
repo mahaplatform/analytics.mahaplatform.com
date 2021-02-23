@@ -1,5 +1,5 @@
-import { spawn } from 'child_process'
 import '@core/services/environment'
+import { spawn } from 'child_process'
 import log from '@core/utils/log'
 import path from 'path'
 

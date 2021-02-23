@@ -1,4 +1,4 @@
-import EnrichQueue from '@app/queue/enrich_queue'
+import EnrichQueue from '@app/queues/enrich_queue'
 import validations from './validations'
 import Raw from '@app/models/raw'
 

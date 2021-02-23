@@ -1,5 +1,5 @@
-import SessionSerializer from '@apps/analytics/serializers/session_serializer'
-import Session from '@apps/analytics/models/session'
+import SessionSerializer from '@app/serializers/session_serializer'
+import Session from '@app/models/session'
 
 const listRoute = async (req, res) => {
 

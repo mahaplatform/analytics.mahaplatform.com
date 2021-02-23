@@ -1,5 +1,5 @@
 import createRedisClient from '@core/utils/create_redis_client'
-import * as knex from '@core/vendor/knex'
+import * as knex from '@core/services/knex'
 import Bull from 'bull'
 
 const queues = {}

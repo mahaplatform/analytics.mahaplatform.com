@@ -1,4 +1,4 @@
-import Validate from '@core/services/validate'
+import Validate from '@app/services/validate'
 import Queue from '@core/objects/queue'
 
 const ValidateQueue = new Queue({

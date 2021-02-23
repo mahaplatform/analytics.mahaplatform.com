@@ -1,4 +1,4 @@
-import ModelQueue from '@app/queue/model_queue'
+import ModelQueue from '@app/queues/model_queue'
 import enrichments from './enrichments'
 import Raw from '@app/models/raw'
 import parseEvent from './event'

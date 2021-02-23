@@ -1,5 +1,5 @@
 import fetchOrCreate from './fetch_or_create'
-import knex from '@core/servies/vendor/knex'
+import knex from '@core/services/knex'
 import Bookshelf from 'bookshelf'
 
 const bookshelf = Bookshelf(knex)

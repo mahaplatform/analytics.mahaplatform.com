@@ -5,7 +5,7 @@ class Model {
 
   constructor(options) {
 
-    const model = bookshelf[options.databaseName].Model.extend({
+    const model = bookshelf.Model.extend({
 
       hasTimestamps: options.hasTimestamps !== false,
 

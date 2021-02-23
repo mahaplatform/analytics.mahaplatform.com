@@ -10,10 +10,10 @@
     "node": ">=14.15.1"
   },
   "scripts": {
-    "build": "npx babel-node --config-file=./src/core/utils/babel.config.js ./src/scripts/build/index.js",
-    "dev": "NODE_ENV=development NODE_OPTIONS=--max-old-space-size=8192 npx babel-node --trace-warnings --config-file=./src/core/utils/babel.config.js ./src/scripts/dev/index.js",
-    "knex": "npx babel-node --config-file=./src/core/utils/babel.config.js ./src/scripts/knex.js",
-    "shipit": "npx babel-node --config-file=./src/core/utils/babel.config.js ./src/scripts/shipit/index.js"
+    "build": "npx babel-node ./src/scripts/build/index.js",
+    "dev": "npx babel-node ./src/scripts/dev.js",
+    "knex": "npx babel-node ./src/scripts/knex.js",
+    "shipit": "npx babel-node ./src/scripts/shipit/index.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
