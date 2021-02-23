@@ -1,0 +1,74 @@
+{
+  "parser": "@babel/eslint-parser",
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "mocha": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "classes": true,
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module",
+    "babelOptions": {
+      "configFile": "./babel.config.js"
+    }
+  },
+  "plugins": [
+  ],
+  "settings": {
+  },
+  "globals": {
+    "Caman": true,
+    "Buffer": true,
+    "__dirname": true,
+    "__filename": true,
+    "process": true,
+    "before": true,
+    "after": true,
+    "__webpack_require__": true,
+    "importScripts": true
+   },
+  "rules": {
+    "template-curly-spacing" : "off",
+    "strict": 0,
+    "comma-dangle": [
+      2,
+      "never"
+    ],
+    "indent": [
+      "error",
+      2, {
+        "ignoredNodes": ["TemplateLiteral"]
+      }
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "no-case-declarations": "off",
+    "no-class-assign": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "none"
+      }
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ]
+  }
+}
