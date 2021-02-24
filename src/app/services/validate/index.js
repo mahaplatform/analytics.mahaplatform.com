@@ -12,30 +12,26 @@ const validate = async (req, job) => {
 
   try {
 
-    const is_valid = await Promise.reduce(validations, async (is_valid, validation) => {
-      if(!is_valid) return false
+    await Promise.mapSeries(validations, async (validation) => {
       return await validation(req, raw.get('data'))
-    }, true)
+    })
 
     await raw.save({
-      is_valid,
       validation_status: 'processed'
     },{
       transacting: req.analytics,
       patch: true
     })
 
-    if(is_valid) {
-      await EnrichQueue.enqueue(req, {
-        id: raw.get('id')
-      })
-    }
+    await EnrichQueue.enqueue(req, {
+      id: raw.get('id')
+    })
 
   } catch(error) {
 
     await raw.save({
       validation_status: 'failed',
-      error: error.stack
+      validation_error: error.stack
     },{
       transacting: req.analytics,
       patch: true

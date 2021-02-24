@@ -2,11 +2,11 @@ import transactionEnrichment from './transaction'
 import timestampsEnrichment from './timestamps'
 import useragentEnrichment from './useragent'
 import ipaddressEnrichment from './ipaddress'
-import campaginEnrichment from './ipaddress'
+import campaginEnrichment from './campaign'
 import referrerEnrichment from './referrer'
 import contextEnrichment from './context'
 import pageEnrichment from './page'
-import mahaEnrichment from './maha'
+import userEnrichment from './user'
 
 const enrichments = [
   pageEnrichment,
@@ -17,7 +17,7 @@ const enrichments = [
   useragentEnrichment,
   contextEnrichment,
   timestampsEnrichment,
-  mahaEnrichment
+  userEnrichment
 ]
 
 export default enrichments

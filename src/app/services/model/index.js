@@ -43,7 +43,7 @@ export const model = async(req, job) => {
 
     await raw.save({
       modeling_status: 'failed',
-      error: error.stack
+      modeling_error: error.stack
     }, {
       transacting: req.analytics,
       patch: true

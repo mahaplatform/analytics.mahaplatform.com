@@ -4,7 +4,7 @@ const robotValidation = async(req, data) => {
 
   if(!data.ua) return event
 
-  return !isbot(data.useragent)
+  if(isbot(data.useragent)) throw new Error('useragent robot')
 
 }
 

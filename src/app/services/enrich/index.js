@@ -37,7 +37,7 @@ const enrich = async (req, job) => {
 
     await raw.save({
       enrichment_status: 'failed',
-      error: error.stack
+      enrichment_error: error.stack
     },{
       transacting: req.analytics,
       patch: true

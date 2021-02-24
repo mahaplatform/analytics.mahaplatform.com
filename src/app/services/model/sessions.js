@@ -10,6 +10,9 @@ import Medium from '@app/models/medium'
 import { getReferer } from './referers'
 import Term from '@app/models/term'
 import App from '@app/models/app'
+import _ from 'lodash'
+import URL from 'url'
+import qs from 'qs'
 
 const fetchOrCreate = async(req, { domain_user, enriched }) => {
 
@@ -103,24 +106,47 @@ const fetchOrCreate = async(req, { domain_user, enriched }) => {
 
 }
 
+const getParams = (req, { enriched, event_type }) => {
+
+  const url = enriched.page_url ? URL.parse(enriched.page_url) : {}
+
+  const qsargs = url.search ? qs.parse(url.search.substr(1)) : {}
+
+  const params = {}
+
+  if(qsargs.ecid) params.email_campaign_id = qsargs.ecid
+
+  if(qsargs.eid) params.email_id = qsargs.eid
+
+  if(event_type.get('type') === 'track_maha' && enriched.unstruct_event) {
+    const { key, value } = enriched.unstruct_event.data.data
+    if(_.includes(['form_id','response_id','event_id','registration_id','store_id','order_id','website_id'], key)) {
+      params[key] = value
+    }
+  }
+
+  return params
+
+}
+
 export const getSession = async(req, { enriched, event_type, domain_user }) => {
 
-  const session = await fetchOrCreate(req, { enriched, domain_user })
-
-  await session.save({
-    email_campaign_id: enriched.email_campaign_id,
-    email_id: enriched.email_id,
-    form_id: enriched.form_id,
-    response_id: enriched.response_id,
-    event_id: enriched.event_id,
-    registration_id: enriched.registration_id,
-    store_id: enriched.store_id,
-    order_id: enriched.order_id,
-    website_id: enriched.website_id
-  }, {
-    transacting: req.analytics,
-    patch: true
+  const session = await fetchOrCreate(req, {
+    domain_user,
+    enriched
   })
+
+  const params = getParams(req, {
+    enriched,
+    event_type
+  })
+
+  if(Object.keys(params).length > 0) {
+    await session.save(params, {
+      transacting: req.analytics,
+      patch: true
+    })
+  }
 
   return session
 
