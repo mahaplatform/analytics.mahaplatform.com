@@ -3,7 +3,6 @@ import { getEventType } from './event_types'
 import { getSession } from './sessions'
 import { createEvent } from './events'
 import Raw from '@app/models/raw'
-import { parseUrl } from './urls'
 
 export const model = async(req, job) => {
 
@@ -15,29 +14,22 @@ export const model = async(req, job) => {
 
   try {
 
-    const data = raw.get('enriched')
+    const enriched = raw.get('enriched')
 
-    const page_url = data.page_url ? parseUrl(data.page_url) : null
+    const domain_user = await getDomainUser(req, { enriched })
 
-    const domain_user = await getDomainUser(req, {
-      data,
-      page_url
-    })
-
-    const event_type = await getEventType(req, { data })
+    const event_type = await getEventType(req, { enriched })
 
     const session = await getSession(req, {
       domain_user,
       event_type,
-      data,
-      page_url
+      enriched
     })
 
     await createEvent(req, {
       session,
       event_type,
-      data,
-      page_url
+      enriched
     })
 
     await raw.save({

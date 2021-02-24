@@ -1,4 +1,3 @@
-import { lookupIPAddress } from '@app/services/maxmind'
 import PostalCode from '@app/models/postal_code'
 import MetroCode from '@app/models/metro_code'
 import IPAddress from '@app/models/ipaddress'
@@ -6,61 +5,57 @@ import Country from '@app/models/country'
 import Region from '@app/models/region'
 import City from '@app/models/city'
 
-export const getIPAddress = async(req, { data }) => {
+export const getIPAddress = async(req, { enriched }) => {
 
   const ipaddress = await IPAddress.query(qb => {
-    qb.where('address', data.user_ipaddress)
+    qb.where('address', enriched.user_ipaddress)
   }).fetch({
     transacting: req.analytics
   })
 
   if(ipaddress) return ipaddress
 
-  const geo = await lookupIPAddress(req, {
-    ipaddress: data.user_ipaddress
-  })
-
-  const city = geo.city ? await City.fetchOrCreate({
-    text: geo.city
+  const city = enriched.geo_city ? await City.fetchOrCreate({
+    text: enriched.geo_city
   }, {
     transacting: req.analytics
   }) : null
 
-  const region = geo.region ? await Region.fetchOrCreate({
-    code: geo.region_code,
-    text: geo.region
+  const region = enriched.geo_region_name ? await Region.fetchOrCreate({
+    code: enriched.geo_region_code,
+    text: enriched.geo_region_name
   }, {
     transacting: req.analytics
   }) : null
 
-  const country = geo.country ? await Country.fetchOrCreate({
-    code: geo.country_code,
-    text: geo.country
+  const country = enriched.geo_country ? await Country.fetchOrCreate({
+    code: enriched.geo_country_code,
+    text: enriched.geo_country
   }, {
     transacting: req.analytics
   }) : null
 
-  const metro_code = geo.metro_code ? await MetroCode.fetchOrCreate({
-    text: geo.metro_code
+  const metro_code = enriched.geo_metro_code ? await MetroCode.fetchOrCreate({
+    text: enriched.geo_metro_code
   }, {
     transacting: req.analytics
   }) : null
 
-  const postal_code = geo.postal_code ? await PostalCode.fetchOrCreate({
-    text: geo.postal_code
+  const postal_code = enriched.geo_zipcode ? await PostalCode.fetchOrCreate({
+    text: enriched.geo_zipcode
   }, {
     transacting: req.analytics
   }) : null
 
   return await IPAddress.forge({
-    address: data.user_ipaddress,
+    address: enriched.user_ipaddress,
     city_id: city ? city.get('id') : null,
     region_id: region ? region.get('id') : null,
     country_id: country ? country.get('id') : null,
     metro_code_id: metro_code ? metro_code.get('id') : null,
     postal_code_id: postal_code ? postal_code.get('id') : null,
-    latitude: geo.latitude,
-    longitude: geo.longitude
+    latitude: enriched.geo_latitude,
+    longitude: enriched.geo_longitude
   }).save(null, {
     transacting: req.analytics
   })

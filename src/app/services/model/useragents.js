@@ -3,53 +3,50 @@ import Useragent from '@app/models/useragent'
 import Browser from '@app/models/browser'
 import Version from '@app/models/version'
 import Device from '@app/models/device'
-import UAParser from 'ua-parser-js'
 import OS from '@app/models/os'
 
-export const getUseragent = async(req, { data }) => {
+export const getUseragent = async(req, { enriched }) => {
 
   const useragent = await Useragent.query(qb => {
-    qb.where('useragent', data.useragent)
+    qb.where('useragent', enriched.useragent)
   }).fetch({
     transacting: req.analytics
   })
 
   if(useragent) return useragent
 
-  const ua = UAParser(data.useragent)
-
   const device = await Device.fetchOrCreate({
-    text: ua.device.type || 'computer'
+    text: enriched.dvce_type
   },{
     transacting: req.analytics
   })
 
-  const manufacturer = ua.device.vendor ? await Manufacturer.fetchOrCreate({
-    text: ua.device.vendor
+  const manufacturer = enriched.dvce_manufacturer ? await Manufacturer.fetchOrCreate({
+    text: enriched.dvce_manufacturer
   },{
     transacting: req.analytics
   }) : null
 
-  const os = ua.os.name ? await OS.fetchOrCreate({
-    text: ua.os.name
+  const os = enriched.os_name ? await OS.fetchOrCreate({
+    text: enriched.os_name
   },{
     transacting: req.analytics
   }): null
 
-  const os_version = ua.os.version ? await Version.fetchOrCreate({
-    text: ua.os.version
+  const os_version = enriched.os_version ? await Version.fetchOrCreate({
+    text: enriched.os_version
   },{
     transacting: req.analytics
   }) : null
 
-  const browser = ua.browser.name ? await Browser.fetchOrCreate({
-    text: ua.browser.name
+  const browser = enriched.br_name ? await Browser.fetchOrCreate({
+    text: enriched.br_name
   },{
     transacting: req.analytics
   }): null
 
-  const browser_version = ua.browser.major ? await Version.fetchOrCreate({
-    text: ua.browser.major
+  const browser_version = enriched.br_version ? await Version.fetchOrCreate({
+    text: enriched.br_version
   },{
     transacting: req.analytics
   }) : null
@@ -61,7 +58,7 @@ export const getUseragent = async(req, { data }) => {
     os_version_id: os_version ? os_version.get('id') : null,
     browser_id: browser ? browser.get('id') : null,
     browser_version_id: browser_version ? browser_version.get('id') : null,
-    useragent: data.useragent
+    useragent: enriched.useragent
   }).save(null, {
     transacting: req.analytics
   })

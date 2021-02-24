@@ -1,25 +1,17 @@
 import DomainUser from '@app/models/domain_user'
 
-const getContactId = ({ data, page_url }) => {
-  if(data.user_id) return data.user_id
-  if(page_url.qsargs && page_url.qsargs.cid) return page_url.qsargs.cid
-  return null
-}
-
-export const getDomainUser = async(req, { data, page_url }) => {
+export const getDomainUser = async(req, { enriched }) => {
 
   const domain_user = await DomainUser.fetchOrCreate({
-    domain_userid: data.domain_userid
+    domain_userid: enriched.domain_userid
   },{
     transacting: req.analytics
   })
 
-  const contact_id = getContactId({ data, page_url })
-
-  if(!data.user_id || domain_user.get('contact_id') === contact_id) return domain_user
+  if(!enriched.user_id || domain_user.get('contact_id') === enriched.user_id) return domain_user
 
   await domain_user.save({
-    contact_id
+    contact_id: enriched.user_id
   }, {
     transacting: req.analytics,
     patch: true

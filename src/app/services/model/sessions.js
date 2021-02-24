@@ -10,18 +10,17 @@ import Medium from '@app/models/medium'
 import { getReferer } from './referers'
 import Term from '@app/models/term'
 import App from '@app/models/app'
-import _ from 'lodash'
 
-const fetchOrCreate = async(req, { data, domain_user }) => {
+const fetchOrCreate = async(req, { domain_user, enriched }) => {
 
   const platform = await Platform.fetchOrCreate({
-    text: data.platform
+    text: enriched.platform
   }, {
     transacting: req.analytics
   })
 
   const app = await App.fetchOrCreate({
-    title: data.app_id,
+    title: enriched.app_id,
     platform_id: platform.get('id')
   }, {
     transacting: req.analytics
@@ -36,48 +35,50 @@ const fetchOrCreate = async(req, { data, domain_user }) => {
 
   if(session) return session
 
-  const useragent = await getUseragent(req, { data })
+  const useragent = await getUseragent(req, {
+    enriched
+  })
 
-  const referer = data.page_referrer ? await getReferer(req, {
-    data
+  const referer = enriched.page_referrer ? await getReferer(req, {
+    enriched
   }) : null
 
   const ipaddress = await getIPAddress(req, {
-    data
+    enriched
   })
 
-  const source = data.mkt_source ? await Source.fetchOrCreate({
-    text: data.mkt_source
+  const source = enriched.mkt_source ? await Source.fetchOrCreate({
+    text: enriched.mkt_source
   },{
     transacting: req.analytics
   }) : null
 
-  const medium = data.mkt_medium ? await Medium.fetchOrCreate({
-    text: data.mkt_source
+  const medium = enriched.mkt_medium ? await Medium.fetchOrCreate({
+    text: enriched.mkt_source
   },{
     transacting: req.analytics
   }) : null
 
-  const campaign = data.mkt_campaign ? await Campaign.fetchOrCreate({
-    text: data.mkt_campaign
+  const campaign = enriched.mkt_campaign ? await Campaign.fetchOrCreate({
+    text: enriched.mkt_campaign
   },{
     transacting: req.analytics
   }) : null
 
-  const term = data.mkt_term ? await Term.fetchOrCreate({
-    text: data.mkt_term
+  const term = enriched.mkt_term ? await Term.fetchOrCreate({
+    text: enriched.mkt_term
   },{
     transacting: req.analytics
   }) : null
 
-  const content = data.mkt_content ? await Content.fetchOrCreate({
-    text: data.mkt_content
+  const content = enriched.mkt_content ? await Content.fetchOrCreate({
+    text: enriched.mkt_content
   },{
     transacting: req.analytics
   }) : null
 
-  const network = data.mkt_network ? await Network.fetchOrCreate({
-    text: data.mkt_network
+  const network = enriched.mkt_network ? await Network.fetchOrCreate({
+    text: enriched.mkt_network
   },{
     transacting: req.analytics
   }) : null
@@ -94,38 +95,32 @@ const fetchOrCreate = async(req, { data, domain_user }) => {
     term_id: term ? term.get('id') : null,
     content_id: content ? content.get('id') : null,
     network_id: network ? network.get('id') : null,
-    clickid: data.mkt_clickid,
-    domain_sessionid: data.domain_sessionid
+    clickid: enriched.mkt_clickid,
+    domain_sessionid: enriched.domain_sessionid
   }).save(null, {
     transacting: req.analytics
   })
 
 }
 
-export const getSession = async(req, { data, event_type, domain_user, page_url }) => {
+export const getSession = async(req, { enriched, event_type, domain_user }) => {
 
-  const session = await fetchOrCreate(req, { data, domain_user })
+  const session = await fetchOrCreate(req, { enriched, domain_user })
 
-  const params = {}
-
-  if(page_url.qsargs) {
-    if(page_url.qsargs.ecid) params.email_campaign_id = page_url.qsargs.ecid
-    if(page_url.qsargs.eid) params.email_id = page_url.qsargs.eid
-  }
-
-  if(event_type.get('type') === 'track_maha') {
-    const { key, value } = data.unstruct_event.data.data
-    if(_.includes(['form_id','response_id','event_id','registration_id','store_id','order_id','website_id'], key)) {
-      params[key] = value
-    }
-  }
-
-  if(Object.keys(params).length > 0) {
-    await session.save(params, {
-      transacting: req.analytics,
-      patch: true
-    })
-  }
+  await session.save({
+    email_campaign_id: enriched.email_campaign_id,
+    email_id: enriched.email_id,
+    form_id: enriched.form_id,
+    response_id: enriched.response_id,
+    event_id: enriched.event_id,
+    registration_id: enriched.registration_id,
+    store_id: enriched.store_id,
+    order_id: enriched.order_id,
+    website_id: enriched.website_id
+  }, {
+    transacting: req.analytics,
+    patch: true
+  })
 
   return session
 

@@ -36,8 +36,6 @@ const parseEvent = (req, { data }) => {
 
   const viewport = parseDimensions(data.vp)
 
-  //const unstruct = data.ue_pr || JSON.parse(atob(data.ue_px))
-
   return {
     app_id: data.aid,
     platform: data.p,

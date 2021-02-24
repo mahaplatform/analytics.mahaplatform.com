@@ -1,44 +1,44 @@
 import _ from 'lodash'
 
-export const getData = (req, { type, data }) => {
+export const getData = (req, { type, enriched }) => {
 
   if(type === 'page_ping') {
     return {
-      x_min: data.pp_xoffset_min,
-      x_max: data.pp_xoffset_max,
-      y_min: data.pp_yoffset_min,
-      y_max: data.pp_yoffset_max
+      x_min: enriched.pp_xoffset_min,
+      x_max: enriched.pp_xoffset_max,
+      y_min: enriched.pp_yoffset_min,
+      y_max: enriched.pp_yoffset_max
     }
   }
 
   if(type === 'transaction_item') {
     return {
-      order_id: data.ti_orderid,
-      sku: data.ti_sku,
-      name: data.ti_name,
-      category: data.ti_category,
-      price: data.ti_price,
-      quantity: data.ti_quantity,
-      currency: data.ti_currency
+      order_id: enriched.ti_orderid,
+      sku: enriched.ti_sku,
+      name: enriched.ti_name,
+      category: enriched.ti_category,
+      price: enriched.ti_price,
+      quantity: enriched.ti_quantity,
+      currency: enriched.ti_currency
     }
   }
 
   if(type === 'transaction') {
     return {
-      order_id: data.tr_orderid,
-      affiliation: data.tr_affiliation,
-      total: data.tr_total,
-      shipping: data.tr_shipping,
-      tax: data.tr_tax,
-      city: data.tr_city,
-      state: data.tr_state,
-      country: data.tr_country,
-      currency: data.tr_currency
+      order_id: enriched.tr_orderid,
+      affiliation: enriched.tr_affiliation,
+      total: enriched.tr_total,
+      shipping: enriched.tr_shipping,
+      tax: enriched.tr_tax,
+      city: enriched.tr_city,
+      state: enriched.tr_state,
+      country: enriched.tr_country,
+      currency: enriched.tr_currency
     }
   }
 
   if(_.includes(['add_to_cart','remove_from_cart'], type)) {
-    const ca = data.unstruct_event.data.data
+    const ca = enriched.unstruct_event.data.data
     return {
       sku: ca.sku,
       name: ca.name,
@@ -50,7 +50,7 @@ export const getData = (req, { type, data }) => {
   }
 
   if(type === 'ad_impression') {
-    const ai = data.unstruct_event.data.data
+    const ai = enriched.unstruct_event.data.data
     return {
       impression_id: ai.impressionId,
       cost_model: ai.costModel,
@@ -64,7 +64,7 @@ export const getData = (req, { type, data }) => {
   }
 
   if(type === 'ad_click') {
-    const ac = data.unstruct_event.data.data
+    const ac = enriched.unstruct_event.data.data
     return {
       target_url: ac.targetUrl,
       click_id: ac.clickId,
@@ -78,7 +78,7 @@ export const getData = (req, { type, data }) => {
   }
 
   if(type === 'ad_conversion') {
-    const ac = data.unstruct_event.data.data
+    const ac = enriched.unstruct_event.data.data
     return {
       conversion_id: ac.conversionId,
       cost_model: ac.costModel,
@@ -94,16 +94,16 @@ export const getData = (req, { type, data }) => {
 
   if(type === 'struct') {
     return {
-      action: data.se_action,
-      category: data.se_category,
-      label: data.se_label,
-      property: data.se_property,
-      value: data.se_value
+      action: enriched.se_action,
+      category: enriched.se_category,
+      label: enriched.se_label,
+      property: enriched.se_property,
+      value: enriched.se_value
     }
   }
 
   if(type === 'social_interaction') {
-    const si = data.unstruct_event.data.data
+    const si = enriched.unstruct_event.data.data
     return {
       action: si.action,
       network: si.network,
@@ -112,7 +112,7 @@ export const getData = (req, { type, data }) => {
   }
 
   if(type === 'site_search') {
-    const ss = data.unstruct_event.data.data
+    const ss = enriched.unstruct_event.data.data
     return {
       terms: ss.terms,
       filters: ss.filters,
@@ -120,8 +120,8 @@ export const getData = (req, { type, data }) => {
     }
   }
 
-  if(data.unstruct_event) {
-    return data.unstruct_event.data.data
+  if(enriched.unstruct_event) {
+    return enriched.unstruct_event.data.data
   }
 
 }

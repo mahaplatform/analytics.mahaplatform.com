@@ -1,20 +1,17 @@
 import Protocol from '@app/models/protocol'
 import Domain from '@app/models/domain'
 import Page from '@app/models/page'
-import URL from 'url'
 
-export const getPage = async(req, data) => {
-
-  const url = URL.parse(data.url)
+export const getPage = async(req, { enriched }) => {
 
   const protocol = await Protocol.fetchOrCreate({
-    text: url.protocol.slice(0, -1)
+    text: enriched.page_urlscheme
   }, {
     transacting: req.analytics
   })
 
   const domain = await Domain.fetchOrCreate({
-    text: url.hostname
+    text: enriched.page_urlhost
   }, {
     transacting: req.analytics
   })
@@ -22,8 +19,8 @@ export const getPage = async(req, data) => {
   const page = await Page.query(qb => {
     qb.where('protocol_id', protocol.get('id'))
     qb.where('domain_id', domain.get('id'))
-    qb.where('path', url.path)
-    qb.where('title', data.title)
+    qb.where('path', enriched.page_urlpath)
+    qb.where('title', enriched.page_title)
   }).fetch({
     transacting: req.analytics
   })
@@ -31,10 +28,10 @@ export const getPage = async(req, data) => {
   if(page) return page
 
   return await Page.forge({
-    title: data.title,
+    title: enriched.page_title,
     protocol_id: protocol.get('id'),
     domain_id: domain.get('id'),
-    path: url.path
+    path: enriched.page_urlpath
   }).save(null, {
     transacting: req.analytics
   })

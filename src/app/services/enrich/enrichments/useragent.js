@@ -2,9 +2,9 @@ import UAParser from 'ua-parser-js'
 
 const useragentEnrichment = async(req, event) => {
 
-  if(!event.ua) return event
+  if(!event.useragent) return event
 
-  const ua = UAParser(event.ua)
+  const ua = UAParser(event.useragent)
 
   return {
     ...event,

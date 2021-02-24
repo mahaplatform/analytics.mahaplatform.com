@@ -1,14 +1,14 @@
 import EventType from '@app/models/event_type'
 
-const getType = (data) => {
-  if(data.event !== 'unstruct') return data.event
-  const matches = data.unstruct_event.data.schema.match(/iglu:([^/]*)\/([^/]*)/)
+const getType = (enriched) => {
+  if(enriched.event !== 'unstruct') return enriched.event
+  const matches = enriched.unstruct_event.data.schema.match(/iglu:([^/]*)\/([^/]*)/)
   return matches[2]
 }
 
-export const getEventType = async(req, { data }) => {
+export const getEventType = async(req, { enriched }) => {
 
-  const type = getType(data)
+  const type = getType(enriched)
 
   return await EventType.fetchOrCreate({
     type

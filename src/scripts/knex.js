@@ -1,5 +1,6 @@
 import '@core/services/environment'
 import knex from '@core/services/knex'
+import log from '@core/utils/log'
 import path from 'path'
 import fs from 'fs'
 
@@ -11,11 +12,25 @@ const processor = async() => {
 
   await knex.transaction(async analytics => {
 
-    await Promise.mapSeries(migrations, async (filename) => {
+    await analytics.schema.createTableIfNotExists('schema_migrations', (table) => {
+      table.string('migration')
+    })
 
-      const migration = require(path.join(migrationPath, filename)).default
+    await Promise.mapSeries(migrations, async (migration) => {
 
-      await migration.up(analytics)
+      const count = await analytics('schema_migrations').where({
+        migration
+      }).count('* as count').then(result => result[0].count)
+
+      if(count > 0) return
+
+      log('info', 'knex', migration)
+
+      const { up } = require(path.join(migrationPath, migration)).default
+
+      await up(analytics)
+
+      await analytics('schema_migrations').insert({ migration })
 
     })
 
