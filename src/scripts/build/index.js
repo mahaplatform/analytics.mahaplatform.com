@@ -103,7 +103,7 @@ const buildDir = (babelrc) => async (dir) => {
 
 const buildServer = async (environment, babelrc) => {
   log('info', 'server', 'Compiling...')
-  const coreDirs = ['lib','objects','scripts','services','utils'].map(dir => `core/${dir}`)
+  const coreDirs = ['lib','objects','services','utils'].map(dir => `core/${dir}`)
   const entries = fs.readdirSync(srcDir).filter(item => {
     return !fs.lstatSync(path.join(srcDir,item)).isDirectory()
   })
