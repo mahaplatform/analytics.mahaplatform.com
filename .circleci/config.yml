@@ -53,7 +53,7 @@ workflows:
       - test:
           filters:
             branches:
-              only: master
+              only: main
             tags:
               only: /.*/
       - deploy:
