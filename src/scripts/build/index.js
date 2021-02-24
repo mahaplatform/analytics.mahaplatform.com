@@ -1,12 +1,7 @@
 import '../../core/services/environment'
-import adminConfig from './webpack.admin.config'
-import webpackConfig from './webpack.config'
-import sdkConfig from './webpack.sdk.config'
-import apps from '../../core/utils/apps'
 import { transform } from '@babel/core'
 import log from '../../core/utils/log'
 import move from 'move-concurrently'
-import webpack from 'webpack'
 import env from '../env/env'
 import rimraf from 'rimraf'
 import mkdirp from 'mkdirp'
@@ -18,8 +13,6 @@ import fs from 'fs'
 
 const srcDir = path.resolve('src')
 
-const appsDir = path.join(srcDir,'apps')
-
 const jswhitelist = ['mt.js']
 
 const dist = path.resolve('dist')
@@ -28,22 +21,8 @@ const staged = `${dist}.staged`
 
 const copy = Promise.promisify(ncp)
 
-const subapps = fs.readdirSync(appsDir).reduce((apps, app) => {
-  const appDir = path.join(appsDir, app, 'web')
-  return [
-    ...apps,
-    ...fs.existsSync(appDir) ? fs.readdirSync(appDir).reduce((apps, subapp, index) => {
-      const dir = path.join(appsDir, app, 'web',subapp)
-      return [
-        ...apps,
-        { app, subapp, dir }
-      ]
-    }, []) : []
-  ]
-}, [])
-
 const getBabelRc = (root) => {
-  const file = path.resolve('src','core','utils','babel.config.js')
+  const file = path.resolve('babel.config.js')
   const babelrc = require(file)
   babelrc.plugins = babelrc.plugins.map(plugin => {
     if(typeof(plugin) === 'string') return plugin
@@ -110,65 +89,37 @@ const buildItem = async (babelrc, item, srcPath, destPath) => {
 
 const buildEntry = (babelrc) => async (entry) => {
   const srcPath = path.resolve('src',entry)
-  const destPath = path.join(staged,'platform',entry)
+  const destPath = path.join(staged,entry)
   await transpileFile(babelrc, srcPath, destPath)
 }
 
 const buildDir = (babelrc) => async (dir) => {
   const srcPath = path.resolve('src',dir)
-  const destPath = path.join(staged,'platform',dir)
+  const destPath = path.join(staged,dir)
   mkdirp.sync(destPath)
   const items = listItems(srcPath)
   await Promise.mapSeries(items, item => buildItem(babelrc, item, srcPath, destPath))
 }
 
-const compile = async (module, config) => {
-  log('info', module, 'Compiling...')
-  await new Promise((resolve, reject) => webpack(config).run((err, stats) => {
-    if(err) reject(err)
-    const info = stats.toJson()
-    if(stats.hasErrors()) console.error(info.errors)
-    resolve(stats)
-  }))
-  log('info', module, 'Compiled successfully.')
-}
-
-const buildAdmin = async (environment) => {
-  await compile('admin', adminConfig)
-}
-
-const buildApps = async (environment) => {
-  await Promise.mapSeries(subapps, async (item) => {
-    const { app, subapp, dir } = item
-    const config = webpackConfig(app, subapp, dir)
-    await compile(`${app}:${subapp}`, config)
-  })
-}
-
-const buildSdk = async () => {
-  await compile('sdk', sdkConfig)
-}
-
 const buildServer = async (environment, babelrc) => {
   log('info', 'server', 'Compiling...')
-  const appDirs = apps.map(app => `apps/${app}`)
-  const coreDirs = ['lib','objects','scripts','services','utils','vendor'].map(dir => `core/${dir}`)
+  const coreDirs = ['lib','objects','scripts','services','utils'].map(dir => `core/${dir}`)
   const entries = fs.readdirSync(srcDir).filter(item => {
     return !fs.lstatSync(path.join(srcDir,item)).isDirectory()
   })
-  await Promise.map([...appDirs, ...coreDirs], buildDir(babelrc))
+  await Promise.map(coreDirs, buildDir(babelrc))
   await Promise.map(entries, buildEntry(babelrc))
   const template = fs.readFileSync(path.join(__dirname, 'ecosystem.config.js.ejs'), 'utf8')
   const data = ejs.render(template, { environment })
-  fs.writeFileSync(path.join(staged,'platform','ecosystem.config.js'), data, 'utf8')
-  await copy(path.join('package.json'), path.join(staged,'platform','package.json'))
-  await copy(path.join('package-lock.json'), path.join(staged,'platform','package-lock.json'))
+  fs.writeFileSync(path.join(staged,'ecosystem.config.js'), data, 'utf8')
+  await copy(path.join('package.json'), path.join(staged,'package.json'))
+  await copy(path.join('package-lock.json'), path.join(staged,'package-lock.json'))
   log('info', 'server', 'Compiled successfully.')
 }
 
 const buildEnv = async(environment) => {
   log('info', 'environment', 'Compiling...')
-  await env(path.join(staged, 'platform'), environment)
+  await env(path.join(staged), environment)
   log('info', 'environment', 'Compiled successfully.')
 }
 
@@ -182,17 +133,14 @@ const getDuration = (start) => {
 const build = async () => {
   const args = process.argv.slice(2)
   const environment = args[0] || 'production'
-  const root = args[1] || path.join(dist, 'platform')
+  const root = args[1] || path.join(dist)
   const babelrc = getBabelRc(root)
   const start = process.hrtime()
   rimraf.sync(staged)
-  mkdirp.sync(path.join(staged,'platform','public'))
   await Promise.all([
     buildServer(environment, babelrc),
-    buildEnv(environment),
-    buildAdmin(environment)
+    buildEnv(environment)
   ])
-  await buildApps(environment)
   rimraf.sync(dist)
   await move(staged, dist)
   log('info', 'build', `Finished in ${getDuration(start)}`)

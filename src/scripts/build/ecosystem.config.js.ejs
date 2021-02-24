@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'cron_<%= environment %>',
+    name: 'analytics_cron_<%= environment %>',
     script: './cron.js',
     instances: 1,
     cwd: process.env.PWD+'/current',
@@ -11,7 +11,7 @@ module.exports = {
       NODE_ENV: '<%= environment %>'
     }
   },{
-    name: 'worker_<%= environment %>',
+    name: 'analytics_worker_<%= environment %>',
     script: './worker.js',
     instances: 2,
     cwd: process.env.PWD+'/current',
