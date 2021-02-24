@@ -13,6 +13,7 @@
     "build": "npx babel-node ./src/scripts/build/index.js",
     "dev": "npx babel-node ./src/scripts/dev.js",
     "knex": "npx babel-node ./src/scripts/knex.js",
+    "maxmind": "npx babel-node ./src/maxmind.js",
     "shipit": "npx babel-node ./src/scripts/shipit/index.js"
   },
   "devDependencies": {

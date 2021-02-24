@@ -5,10 +5,10 @@ import { createEvent } from './events'
 import Raw from '@app/models/raw'
 import { parseUrl } from './urls'
 
-export const model = async(req, { id }) => {
+export const model = async(req, job) => {
 
   const raw = await Raw.query(qb => {
-    qb.where('id', id)
+    qb.where('id', job.data.id)
   }).fetch({
     transacting: req.analytics
   })

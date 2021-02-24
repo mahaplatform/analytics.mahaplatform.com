@@ -5,9 +5,7 @@ const pageEnrichment = async(req, event) => {
   if(!event.page_url) return event
 
   const url = URL.parse(event.page_url)
-
-  console.log(url)
-
+  
   return {
     ...event,
     page_urlscheme: url.protocol.slice(0, -1),
