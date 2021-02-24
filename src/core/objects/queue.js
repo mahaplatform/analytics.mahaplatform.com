@@ -1,5 +1,6 @@
 import createRedisClient from '@core/utils/create_redis_client'
-import * as knex from '@core/services/knex'
+import Logger from '@core/services/logger'
+import knex from '@core/services/knex'
 import Bull from 'bull'
 
 const queues = {}
@@ -19,7 +20,7 @@ const getConcurrency = (name) => {
 class Queue {
 
   constructor(options) {
-    this.processor = this._getProcessor(options.processor, options.log)
+    this.processor = this._getProcessor(options.processor)
     this.completed = this._getCompleted(options.completed)
     this.failed = this._getFailed(options.failed)
     this.concurrency = getConcurrency(options.queue)
@@ -65,8 +66,9 @@ class Queue {
     this.enqueue()
   }
 
-  _getProcessor(processor, log = true) {
-    const withtransaction = this._withTransaction(processor)
+  _getProcessor(processor) {
+    const withLogger = this._withLogger(processor)
+    const withtransaction = this._withTransaction(withLogger)
     return this._withCallbacks(withtransaction)
   }
 
@@ -93,9 +95,27 @@ class Queue {
     }
   }
 
+  _withLogger(processor) {
+    return async (req, job) => {
+      const logger = new Logger(this.queueName)
+      logger.begin(req)
+      const data = {
+        id: job.id,
+        job: job.data
+      }
+      try {
+        await processor(req, job)
+        logger.info(req, this.name, data)
+      } catch(err) {
+        logger.error(req, this.name, data, err)
+        throw(err)
+      }
+    }
+  }
+
   _withTransaction(processor) {
     return async (job) => {
-      return knex.analytics.transaction(async analytics => {
+      return knex.transaction(async analytics => {
         const req = {}
         req.analytics = analytics
         await processor(req, job)

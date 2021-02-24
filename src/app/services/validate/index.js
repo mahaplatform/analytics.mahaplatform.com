@@ -19,7 +19,7 @@ const validate = async (req, job) => {
 
     await raw.save({
       is_valid,
-      status: 'processed'
+      validation_status: 'processed'
     },{
       transacting: req.analytics,
       patch: true

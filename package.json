@@ -60,6 +60,7 @@
     "pluralize": "^6.0.0",
     "qs": "^6.4.0",
     "tar-stream": "^2.2.0",
+    "ua-parser-js": "^0.7.24",
     "winston": "^3.3.3"
   }
 }

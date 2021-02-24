@@ -1,10 +1,10 @@
-import Validate from '@app/services/validate'
+import validate from '@app/services/validate'
 import Queue from '@core/objects/queue'
 
 const ValidateQueue = new Queue({
   queue: 'analytics',
   name: 'validate',
-  processor: Validate
+  processor: validate
 })
 
 export default ValidateQueue

@@ -1,8 +1,8 @@
 import { getDomainUser } from './domain_users'
 import { getEventType } from './event_types'
-import Raw from '@apps/analytics/models/raw'
 import { getSession } from './sessions'
 import { createEvent } from './events'
+import Raw from '@app/models/raw'
 import { parseUrl } from './urls'
 
 export const model = async(req, { id }) => {
@@ -41,7 +41,7 @@ export const model = async(req, { id }) => {
     })
 
     await raw.save({
-      status: 'processed'
+      modeling_status: 'processed'
     }, {
       transacting: req.analytics,
       patch: true

@@ -1,7 +1,7 @@
+import { lookupIPAddress } from '@app/services/maxmind'
 import PostalCode from '@app/models/postal_code'
 import MetroCode from '@app/models/metro_code'
 import IPAddress from '@app/models/ipaddress'
-import { lookupIPAddress } from './maxmind'
 import Country from '@app/models/country'
 import Region from '@app/models/region'
 import City from '@app/models/city'

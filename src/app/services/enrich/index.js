@@ -15,20 +15,20 @@ const enrich = async (req, job) => {
   try {
 
     const event = parseEvent(req, {
-      data: raw.get('row')
+      data: raw.get('data')
     })
 
-    const enriched = await Promise.reduce(enrichments, async (enrichment, enriched) => {
+    const enriched = await Promise.reduce(enrichments, async (enriched, enrichment) => {
       return await enrichment(req, enriched)
     }, {
-      event,
-      collector_tstamp: raw.get('created_at').format('YYYY-MM-DD HH:mm:ss.SSS'),
+      ...event,
+      collector_tstamp: moment(raw.get('created_at')).format('YYYY-MM-DD HH:mm:ss.SSS'),
       etl_timetamp: moment().format('YYYY-MM-DD HH:mm:ss.SSS')
     })
 
     await raw.save({
       enriched,
-      status: 'processed'
+      enrichment_status: 'processed'
     },{
       transacting: req.analytics,
       patch: true
@@ -41,7 +41,7 @@ const enrich = async (req, job) => {
   } catch(error) {
 
     await raw.save({
-      status: 'failed',
+      enrichment_status: 'failed',
       error: error.stack
     },{
       transacting: req.analytics,

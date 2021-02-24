@@ -15,8 +15,8 @@ const referrerEnrichment = async(req, event) => {
     refr_urlhost: url.hostname,
     refr_urlport: url.port,
     refr_urlpath: url.pathname,
-    refr_urlquery: url.search.substr(1),
-    refr_urlfragment: url.hash.substr(1),
+    refr_urlquery: url.search ? url.search.substr(1) : null,
+    refr_urlfragment: url.hash ? url.hash.substr(1) : null,
     refr_medium: args.utm_medium || args.medium,
     refr_source: args.utm_source || args.source,
     refr_term: args.utm_term || args.term
