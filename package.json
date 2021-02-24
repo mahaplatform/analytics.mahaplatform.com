@@ -14,7 +14,8 @@
     "dev": "npx babel-node ./src/scripts/dev.js",
     "knex": "npx babel-node ./src/scripts/knex.js",
     "maxmind": "npx babel-node ./src/maxmind.js",
-    "shipit": "npx babel-node ./src/scripts/shipit/index.js"
+    "shipit": "npx babel-node ./src/scripts/shipit/index.js",
+    "test": "npx babel-node ./src/scripts/test.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
