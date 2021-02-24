@@ -35,6 +35,7 @@ const processor = async () => {
       [tag.Key]: tag.Value
     }), {})
     return {
+      id: instance.InstanceId,
       env: tags.Env || 'production',
       user: 'centos',
       host: tags.Name,
@@ -42,7 +43,8 @@ const processor = async () => {
       roles: (tags.Role || '').split(',')
     }
   }).filter(instance => {
-    return _.intersection(['analyticsserver'], instance.roles).length > 0
+    return instance.id === 'i-0740ee3dcb6641954'
+    // return _.intersection(['analyticsserver'], instance.roles).length > 0
   }).sort((a,b) => {
     return a.host < b.host ? -1 : 1
   })
@@ -80,7 +82,6 @@ const processor = async () => {
   const currentDir = path.join(deployDir,'current')
 
   utils.registerTask(shipit, 'deploy', [
-    'deploy:preclean',
     'deploy:env',
     'deploy:build',
     'deploy:zip',
