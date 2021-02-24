@@ -189,7 +189,6 @@ const build = async () => {
   mkdirp.sync(path.join(staged,'platform','public'))
   await Promise.all([
     buildServer(environment, babelrc),
-    buildSdk(),
     buildEnv(environment),
     buildAdmin(environment)
   ])
